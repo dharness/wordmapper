@@ -4,7 +4,7 @@ import requests
 import argparse
 
 def main(args):
-  with open(f'./by_letter/{args.letter}.csv', 'r') as infile:
+  with open(f'./chunks/{args.chunk_name}.csv', 'r') as infile:
     words = infile.read().split('\n')
     rhymes_by_word = defaultdict(set)
 
@@ -22,12 +22,12 @@ def main(args):
 
       rhymes_by_word[word] = rhymes
   print('Fetching complete. Processing...')  
-  write_to_csv(rhymes_by_word, args.letter)
+  write_to_csv(rhymes_by_word, args.chunk_name)
   print('Writing complete.')  
 
 
-def write_to_csv(rhymes_by_word, letter):
-  with open(f'./rhymes_by_letter/{letter}.csv', 'w') as outfile:
+def write_to_csv(rhymes_by_word, chunk_name):
+  with open(f'./rhymes_by_chunk/{chunk_name}.csv', 'w') as outfile:
     for word, rhymes in rhymes_by_word.items():
       sys.stdout.write(f'Writing: {len(rhymes_by_word)} %\r')
       sys.stdout.flush()
@@ -35,7 +35,7 @@ def write_to_csv(rhymes_by_word, letter):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--letter', type=str)
+parser.add_argument('--chunk_name', type=str)
 
 args = parser.parse_args()
 main(args)
