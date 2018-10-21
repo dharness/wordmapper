@@ -9,5 +9,3 @@ for i in $( ls $CHUNK_PARTS_PATH | grep part ); do
     echo item: $i
     python get_rhymes_async.py --chunk_path="./chunk-parts/$i" &
 done
-# for chunk in generated_chunks:
-#   python get_rhymes_async.py --chunk_name="$chunk"

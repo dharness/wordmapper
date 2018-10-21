@@ -27,7 +27,11 @@ async def main(args):
                 sys.stdout.write(f'Fetching: {str(100*i/len(words))} %\r')
                 sys.stdout.flush()
                 r = await fetch(session, f'https://api.datamuse.com/words?rel_rhy={word}')
-                results = json.loads(r)
+                try:
+                    results = json.loads(r)
+                except Exception as e:
+                    print(e)
+                    continue
                 rhymes = set()
                 for rhyme_data in results:
                     rhyme = rhyme_data['word']
