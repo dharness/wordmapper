@@ -1,5 +1,5 @@
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM
-'file:///Users/dharness/dev/wordmapper/word.csv' as line
+'file:///Users/dharness/dev/wordmapper/words_lower.csv' as line
 
-CREATE (word:Word { text: lower(line.text) })
+MERGE (word:Word { text: line.text })
