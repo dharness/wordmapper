@@ -18,14 +18,13 @@ async def main():
 
 async def main(args):
     async with aiohttp.ClientSession() as session:
-        with open(f'./chunks/{args.chunk_name}.csv', 'r') as infile:
+        with open(args.chunk_path, 'r') as infile:
             words = infile.read().split('\n')
-            words = words
             rhymes_by_word = defaultdict(set)
 
             for i, word in enumerate(words):
                 word = word.lower()
-                sys.stdout.write(f'Fetching: {str(i/len(words))} %\r')
+                sys.stdout.write(f'Fetching: {str(100*i/len(words))} %\r')
                 sys.stdout.flush()
                 r = await fetch(session, f'https://api.datamuse.com/words?rel_rhy={word}')
                 results = json.loads(r)
@@ -38,20 +37,22 @@ async def main(args):
                 rhymes_by_word[word] = rhymes
 
     print('Fetching complete. Processing...')  
-    write_to_csv(rhymes_by_word, args.chunk_name)
+    part_name = args.chunk_path.split('/')[-1]
+    out_path = f'./rhymes_by_part/{part_name}.csv'
+    write_to_csv(rhymes_by_word, out_path)
     print('Writing complete.')  
 
 
-def write_to_csv(rhymes_by_word, chunk_name):
-  with open(f'./rhymes_by_chunk/{chunk_name}.csv', 'w') as outfile:
-    for word, rhymes in rhymes_by_word.items():
-      sys.stdout.write(f'Writing: {len(rhymes_by_word)} %\r')
-      sys.stdout.flush()
-      outfile.write(f"{word},{','.join(list(rhymes))}\n")
+def write_to_csv(rhymes_by_word, out_path):
+    with open(out_path, 'w') as outfile:
+        for word, rhymes in rhymes_by_word.items():
+            sys.stdout.write(f'Writing: {len(rhymes_by_word)} %\r')
+            sys.stdout.flush()
+            outfile.write(f"{word},{','.join(list(rhymes))}\n")
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--chunk_name', type=str)
+parser.add_argument('--chunk_path', type=str)
 
 args = parser.parse_args()
 
